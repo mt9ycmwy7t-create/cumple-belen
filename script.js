@@ -9,39 +9,57 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let actual = 0;
 
+
+    // ========================================
+    // MOSTRAR CAPÍTULO
+    // ========================================
+
     function mostrarCapitulo(numero) {
 
         capitulos.forEach(function (capitulo, indice) {
 
             if (indice === numero) {
+
                 capitulo.style.display = "flex";
                 capitulo.classList.add("activo");
+
             } else {
+
                 capitulo.style.display = "none";
                 capitulo.classList.remove("activo");
+
             }
 
         });
 
         actual = numero;
 
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
+
+        // Mostrar la primera foto con su animación
+        const foto = capitulos[numero].querySelector(".foto-container");
+
+        if (foto) {
+            setTimeout(function () {
+                foto.classList.add("mostrar");
+            }, 100);
+        }
+
+
+        // Ir directamente al capítulo
+        capitulos[numero].scrollIntoView({
+            behavior: "smooth",
+            block: "start"
         });
+
     }
 
 
-    // Mostrar solamente el primer capítulo
-    if (capitulos.length > 0) {
-        mostrarCapitulo(0);
-    }
+    // ========================================
+    // BOTONES SIGUIENTE
+    // ========================================
 
+    botones.forEach(function (boton) {
 
-    // Botones SIGUIENTE
-    botones.forEach(function (boton, indice) {
-
-        // Quitar el onclick antiguo del HTML
         boton.removeAttribute("onclick");
 
         boton.addEventListener("click", function (e) {
@@ -50,7 +68,9 @@ document.addEventListener("DOMContentLoaded", function () {
             e.stopPropagation();
 
             if (actual < capitulos.length - 1) {
+
                 mostrarCapitulo(actual + 1);
+
             }
 
         });
@@ -70,7 +90,9 @@ document.addEventListener("DOMContentLoaded", function () {
         comenzar.addEventListener("click", function () {
 
             if (musica) {
+
                 musica.play().catch(function () {});
+
             }
 
             mostrarCapitulo(0);
@@ -124,5 +146,24 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
     }
+
+
+    // ========================================
+    // NO MOSTRAR LOS DEMÁS AL PRINCIPIO
+    // ========================================
+
+    capitulos.forEach(function (capitulo, indice) {
+
+        if (indice === 0) {
+
+            capitulo.style.display = "flex";
+
+        } else {
+
+            capitulo.style.display = "none";
+
+        }
+
+    });
 
 });
