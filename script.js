@@ -1,238 +1,128 @@
 // ========================================
-// BOTÓN "COMENZAR NUESTRA HISTORIA"
+// HISTORIA POR CAPÍTULOS
 // ========================================
 
-const boton = document.getElementById("comenzar");
-const musica = document.getElementById("musica");
+document.addEventListener("DOMContentLoaded", function () {
 
+    const capitulos = document.querySelectorAll(".capitulo");
+    const botones = document.querySelectorAll(".siguiente");
 
-// ========================================
-// CAPÍTULOS
-// ========================================
+    let actual = 0;
 
-const capitulos = document.querySelectorAll(".capitulo");
+    function mostrarCapitulo(numero) {
 
-let capituloActual = 0;
+        capitulos.forEach(function (capitulo, indice) {
 
+            if (indice === numero) {
+                capitulo.style.display = "flex";
+                capitulo.classList.add("activo");
+            } else {
+                capitulo.style.display = "none";
+                capitulo.classList.remove("activo");
+            }
 
-// ========================================
-// MOSTRAR CAPÍTULO
-// ========================================
+        });
 
-function mostrarCapitulo(indice) {
+        actual = numero;
 
-    if (!capitulos.length) {
-        return;
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
     }
 
-    if (indice < 0 || indice >= capitulos.length) {
-        return;
-    }
 
-    capitulos.forEach(function(capitulo) {
-
-        capitulo.classList.remove("activo");
-
-    });
-
-    capitulos[indice].classList.add("activo");
-
-    capituloActual = indice;
-
-}
-
-
-// ========================================
-// BOTÓN COMENZAR
-// ========================================
-
-if (boton) {
-
-    boton.addEventListener("click", function() {
-
-        // Iniciar música
-        if (musica) {
-
-            musica.play().catch(function(error) {
-
-                console.log(
-                    "No se pudo iniciar la música:",
-                    error
-                );
-
-            });
-
-        }
-
-        // Activar modo historia
-        document.body.classList.add("modo-historia");
-
-        // Mostrar capítulo 1
+    // Mostrar solamente el primer capítulo
+    if (capitulos.length > 0) {
         mostrarCapitulo(0);
+    }
+
+
+    // Botones SIGUIENTE
+    botones.forEach(function (boton, indice) {
+
+        // Quitar el onclick antiguo del HTML
+        boton.removeAttribute("onclick");
+
+        boton.addEventListener("click", function (e) {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (actual < capitulos.length - 1) {
+                mostrarCapitulo(actual + 1);
+            }
+
+        });
 
     });
 
-}
+
+    // ========================================
+    // BOTÓN COMENZAR
+    // ========================================
+
+    const comenzar = document.getElementById("comenzar");
+    const musica = document.getElementById("musica");
+
+    if (comenzar) {
+
+        comenzar.addEventListener("click", function () {
+
+            if (musica) {
+                musica.play().catch(function () {});
+            }
+
+            mostrarCapitulo(0);
+
+        });
+
+    }
 
 
-// ========================================
-// BOTONES SIGUIENTE
-// ========================================
+    // ========================================
+    // BOTÓN MÚSICA
+    // ========================================
 
-const botonesSiguiente =
-    document.querySelectorAll(".siguiente");
+    const botonMusica = document.getElementById("botonMusica");
 
+    if (botonMusica && musica) {
 
-botonesSiguiente.forEach(function(botonSiguiente) {
+        botonMusica.addEventListener("click", function () {
 
-    botonSiguiente.addEventListener("click", function() {
+            if (musica.muted) {
 
-        const destino =
-            botonSiguiente.getAttribute("data-destino");
+                musica.muted = false;
+                botonMusica.textContent = "🔊 Música";
 
-        if (!destino) {
-            return;
-        }
+            } else {
 
-        const siguiente =
-            document.getElementById(destino);
-
-        if (!siguiente) {
-            return;
-        }
-
-        const indice =
-            Array.from(capitulos).indexOf(siguiente);
-
-        if (indice !== -1) {
-
-            mostrarCapitulo(indice);
-
-        }
-
-    });
-
-});
-
-
-// ========================================
-// BOTÓN SILENCIAR / ACTIVAR MÚSICA
-// ========================================
-
-const botonMusica =
-    document.getElementById("botonMusica");
-
-
-if (botonMusica && musica) {
-
-    botonMusica.addEventListener("click", function() {
-
-        if (musica.muted) {
-
-            musica.muted = false;
-
-            botonMusica.textContent = "🔊 Música";
-
-        } else {
-
-            musica.muted = true;
-
-            botonMusica.textContent = "🔇 Silenciar";
-
-        }
-
-    });
-
-}
-
-
-// ========================================
-// ANIMACIÓN DE LA PRIMERA FOTO
-// ========================================
-
-const foto =
-    document.querySelector(".foto-container");
-
-
-const observador =
-    new IntersectionObserver(function(elementos) {
-
-        elementos.forEach(function(elemento) {
-
-            if (elemento.isIntersecting) {
-
-                elemento.target.classList.add("mostrar");
+                musica.muted = true;
+                botonMusica.textContent = "🔇 Silenciar";
 
             }
 
         });
 
-    }, {
-        threshold: 0.3
-    });
+    }
 
 
-if (foto) {
+    // ========================================
+    // CARTA
+    // ========================================
 
-    observador.observe(foto);
+    const abrirCarta = document.getElementById("abrirCarta");
+    const carta = document.getElementById("carta");
 
-}
+    if (abrirCarta && carta) {
 
+        abrirCarta.addEventListener("click", function () {
 
-// ========================================
-// ANIMACIÓN DE LOS CAPÍTULOS
-// ========================================
-
-const observadorCapitulos =
-    new IntersectionObserver(function(elementos) {
-
-        elementos.forEach(function(elemento) {
-
-            if (elemento.isIntersecting) {
-
-                elemento.target.classList.add("activo");
-
-            }
+            carta.classList.add("abierta");
+            abrirCarta.style.display = "none";
 
         });
 
-    }, {
-        threshold: 0.25
-    });
-
-
-capitulos.forEach(function(capitulo) {
-
-    observadorCapitulos.observe(capitulo);
+    }
 
 });
-
-
-// ========================================
-// CARTA DE CUMPLEAÑOS
-// ========================================
-
-const abrirCarta =
-    document.getElementById("abrirCarta");
-
-const carta =
-    document.getElementById("carta");
-
-
-if (abrirCarta && carta) {
-
-    abrirCarta.addEventListener("click", function() {
-
-        carta.classList.add("abierta");
-
-        abrirCarta.style.display = "none";
-
-        if (typeof burst === "function") {
-
-            burst();
-
-        }
-
-    });
-
-}
